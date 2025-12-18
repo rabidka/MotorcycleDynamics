@@ -13,6 +13,20 @@ module.exports = function(eleventyConfig) {
     figcaption: "alt",
     attributes: true  // для {width=...} в картинках
   });
+  
+  const urlFilter = eleventyConfig.getFilter("url");
+  
+  md.renderer.rules.image = function(tokens, idx, options, env, self) {
+    const token = tokens[idx];
+    let src = token.attrGet("src");
+  
+    if (src && src.startsWith("/")) {
+      src = urlFilter(src);
+      token.attrSet("src", src);
+    }
+  
+    return self.renderToken(tokens, idx, options);
+  };
 
   eleventyConfig.setLibrary("md", md);
 
@@ -23,7 +37,7 @@ module.exports = function(eleventyConfig) {
       return (a.data.nav_order || 0) - (b.data.nav_order || 0) || a.fileSlug.localeCompare(b.fileSlug);
     });
   });
-
+  
   eleventyConfig.addPassthroughCopy("docs/images");
   eleventyConfig.addPassthroughCopy("images");
   eleventyConfig.addPassthroughCopy("media");
@@ -37,13 +51,9 @@ module.exports = function(eleventyConfig) {
     },
     templateFormats: ["md", "njk"],
     markdownTemplateEngine: "njk",
+	pathPrefix: process.env.PREVIEW ? "/" : "/MotorcycleDynamics/",
     htmlTemplateEngine: "njk"
   };
-
-  // Добавляем префикс ТОЛЬКО на GitHub Actions (продакшен)
-  if (process.env.GITHUB_ACTIONS === "true") {
-    baseConfig.pathPrefix = "/MotorcycleDynamics/";
-  }
 
   return baseConfig;
 };

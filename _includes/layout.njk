@@ -34,11 +34,11 @@
 <body>
   <aside>
     <h3>Оглавление</h3>
-    <ul>
-      {% for page in collections.docs %}
-        <li><a href="{{ page.url }}">{{ page.data.title }}</a></li>
-      {% endfor %}
-    </ul>
+		<ul>
+		{% for page in collections.docs %}
+			<li><a href="{{ page.url | url }}">{{ page.data.title }}</a></li>
+		{% endfor %}
+		</ul>
   </aside>
   <main>
     {{ content | safe }}
