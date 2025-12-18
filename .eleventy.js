@@ -39,6 +39,7 @@ module.exports = function(eleventyConfig) {
       layouts: "_includes"         // Здесь указываем, где лежат layouts
     },
     templateFormats: ["md", "njk"],
+	pathPrefix: "/MotorcycleDynamics/",
     markdownTemplateEngine: "njk", // Markdown-файлы обрабатываются через Nunjucks
     htmlTemplateEngine: "njk"
   };
