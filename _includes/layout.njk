@@ -29,19 +29,205 @@
       margin-top: 12px;
       color: #333;
     }
+    aside ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    aside li {
+      margin: 6px 0;
+    }
+    
+    aside a {
+      display: block;
+      padding: 10px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.2s ease;
+      font-size: 15px;
+      position: relative; /* для полоски */
+    }
+    
+    aside a:hover {
+      background-color: #f1f3f5;
+      color: #1a1a1a;
+    }
+    
+    /* Эргономичная подсветка активного пункта — спокойно и заметно */
+    aside li.active a {
+      font-weight: bold;
+      color: #1a1a1a;
+      background-color: #f8f9fa;
+      border-left: 4px solid #4a90e2; /* тонкая синяя полоска слева */
+      padding-left: 18px; /* отступ под полоску */
+    }
+    
+    /* Кнопки в правом нижнем углу */
+    .nav-buttons {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .nav-buttons button {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid #4a90e2;
+      color: #4a90e2;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .nav-buttons button:hover:not(:disabled) {
+      background: #4a90e2;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+    }
+    
+    .nav-buttons button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #ccc;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
   <aside>
     <h3>Оглавление</h3>
 		<ul>
-		{% for page in collections.docs %}
-			<li><a href="{{ page.url | url }}">{{ page.data.title }}</a></li>
-		{% endfor %}
+		  {% for doc in collections.docs %}
+			<li {% if doc.url == page.url %}class="active"{% endif %}>
+			  <a href="{{ doc.url | url }}">{{ doc.data.title }}</a>
+			</li>
+		  {% endfor %}
 		</ul>
   </aside>
   <main>
     {{ content | safe }}
   </main>
+  
+  <!-- Кнопки навигации по оглавлению -->
+	<div class="nav-buttons">
+	  <button id="prev-btn" title="Предыдущая глава">⬅</button>
+	  <button id="next-btn" title="Следующая глава">➡</button>
+	</div>
+
+  <!-- Встроенный скрипт — всё в одном месте, никаких проблем с путями -->
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const aside = document.querySelector('aside');
+    const activeItem = document.querySelector('aside li.active');
+
+    // Ключ для хранения (один для всего сайта, т.к. меню одинаковое на всех страницах)
+    const STORAGE_KEY = 'motorcycle-sidebar-scroll';
+
+    // 1. Восстанавливаем сохранённый скролл (если есть)
+    const savedScroll = sessionStorage.getItem(STORAGE_KEY);
+    if (savedScroll && aside) {
+      aside.scrollTop = parseInt(savedScroll, 10);
+    }
+
+    // 2. Плавная анимация к центру активного пункта (от текущего положения)
+    if (activeItem && aside) {
+      // Ждём чуть, чтобы восстановленный скролл применился
+      setTimeout(() => {
+        const asideHeight = aside.clientHeight;
+        const itemHeight = activeItem.offsetHeight;
+        const itemTop = activeItem.offsetTop;
+
+        const targetScrollTop = Math.max(0, itemTop - (asideHeight / 2) + (itemHeight / 2));
+
+        const startScrollTop = aside.scrollTop;
+        const distance = targetScrollTop - startScrollTop;
+        const duration = 600;
+        let startTime = null;
+
+        // Если почти на месте — не анимируем
+        if (Math.abs(distance) < 20) {
+          aside.scrollTop = targetScrollTop;
+          return;
+        }
+
+        function animate(currentTime) {
+          if (!startTime) startTime = currentTime;
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          const ease = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+          aside.scrollTop = startScrollTop + distance * ease;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }, 50); // маленький таймаут для надёжности
+    }
+
+    // 3. Сохраняем скролл перед уходом по любой ссылке в меню
+    const menuLinks = document.querySelectorAll('aside ul a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (aside) {
+          sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
+        }
+      });
+    });
+
+    // === Навигация кнопками (без изменений) ===
+    const links = Array.from(document.querySelectorAll('aside ul a'));
+    const currentUrl = window.location.pathname;
+
+    let currentIndex = links.findIndex(link => link.pathname === currentUrl);
+
+    const goTo = (index) => {
+      if (index >= 0 && index < links.length) {
+        // Сохраняем скролл перед переходом
+        if (aside) {
+          sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
+        }
+        window.location.href = links[index].href;
+      }
+    };
+
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    const updateButtons = () => {
+      prevBtn.disabled = currentIndex <= 0;
+      nextBtn.disabled = currentIndex >= links.length - 1 || currentIndex === -1;
+    };
+
+    updateButtons();
+
+    prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+
+    // Стрелки клавиатуры
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevBtn.click();
+      if (e.key === 'ArrowRight') nextBtn.click();
+    });
+  });
+</script>
 </body>
 </html>
