@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title or 'Motorcycle Dynamics' }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; display: flex; }
+    aside { width: 250px; background: #f4f4f4; padding: 20px; height: 100vh; position: fixed; overflow-y: auto; }
+    aside ul { list-style: none; padding: 0; }
+    aside a { text-decoration: none; color: #333; display: block; padding: 8px; border-radius: 4px; }
+    aside a:hover { background: #e0e0e0; }
+    main { margin-left: 270px; padding: 40px; max-width: 800px; }
+    h1, h2 { color: #2c3e50; }
+    mjx-assistive-mml {
+      display: none !important;
+    }
+    figure {
+      text-align: center;
+      margin: 40px 0;
+    }
+    figure img {
+      max-width: 100%;
+      height: auto;
+	  width: 80%;
+    }
+    figure figcaption {
+      font-weight: bold;
+      font-style: italic;
+      margin-top: 12px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <h3>Оглавление</h3>
+    <ul>
+      {% for page in collections.docs %}
+        <li><a href="{{ page.url }}">{{ page.data.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </aside>
+  <main>
+    {{ content | safe }}
+  </main>
+</body>
+</html>
