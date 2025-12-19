@@ -4,230 +4,687 @@
   <meta charset="UTF-8">
   <title>{{ title or 'Motorcycle Dynamics' }}</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; display: flex; }
-    aside { width: 250px; background: #f4f4f4; padding: 20px; height: 100vh; position: fixed; overflow-y: auto; }
-    aside ul { list-style: none; padding: 0; }
-    aside a { text-decoration: none; color: #333; display: block; padding: 8px; border-radius: 4px; }
-    aside a:hover { background: #e0e0e0; }
-    main { margin-left: 270px; padding: 40px; max-width: 800px; }
-    h1, h2 { color: #2c3e50; }
-    mjx-assistive-mml {
-      display: none !important;
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+      margin: 0;
+      background: #fdfdfd;
+      color: #2d3436;
+      line-height: 1.8;
+      font-size: 16.5px;
     }
-    figure {
-      text-align: center;
-      margin: 40px 0;
+
+    aside {
+      width: 300px;
+      background: #ffffff;
+      border-right: 1px solid #e8ecef;
+      padding: 28px 0;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      overflow-y: auto;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+      z-index: 50;
+      transition: transform 0.3s ease;
     }
-    figure img {
-      max-width: 100%;
-      height: auto;
-	  width: 80%;
+
+    aside h3 {
+      margin: 0 28px 24px;
+      font-size: 19px;
+      font-weight: 600;
+      color: #2c3e50;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e8ecef;
     }
-    figure figcaption {
-      font-weight: bold;
-      font-style: italic;
-      margin-top: 12px;
-      color: #333;
-    }
+
     aside ul {
       list-style: none;
       padding: 0;
       margin: 0;
     }
-    
-    aside li {
-      margin: 6px 0;
-    }
-    
-    aside a {
-      display: block;
-      padding: 10px 14px;
-      border-radius: 6px;
-      text-decoration: none;
-      color: #333;
-      transition: all 0.2s ease;
-      font-size: 15px;
-      position: relative; /* для полоски */
-    }
-    
-    aside a:hover {
-      background-color: #f1f3f5;
-      color: #1a1a1a;
-    }
-    
-    /* Эргономичная подсветка активного пункта — спокойно и заметно */
-    aside li.active a {
-      font-weight: bold;
-      color: #1a1a1a;
-      background-color: #f8f9fa;
-      border-left: 4px solid #4a90e2; /* тонкая синяя полоска слева */
-      padding-left: 18px; /* отступ под полоску */
-    }
-    
-    /* Кнопки в правом нижнем углу */
-    .nav-buttons {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 1000;
+
+    aside .item-header {
       display: flex;
-      gap: 12px;
+      align-items: center;
+      margin: 3px 12px;
     }
-    
-    .nav-buttons button {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px solid #4a90e2;
-      color: #4a90e2;
-      font-size: 28px;
-      cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(6px);
+
+    aside .arrow {
+      width: 32px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 11px;
+      color: #7f8c8d;
+      transition: color 0.2s ease, transform 0.2s ease;
+      flex-shrink: 0;
     }
-    
+
+    aside .arrow.toggle {
+      cursor: pointer;
+    }
+
+    aside .arrow.toggle:hover {
+      color: #34495e;
+    }
+
+    aside .has-children.expanded > .item-header > .arrow {
+      transform: rotate(90deg);
+      color: #3498db;
+    }
+
+    aside .title-link {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #34495e;
+      font-size: 15.5px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    aside .title-link:hover {
+      background: #f0f7ff;
+      color: #2980b9;
+    }
+
+    aside li.active > .item-header > .title-link {
+      background: #e3f2fd;
+      color: #1976d2;
+      font-weight: 600;
+      border-left: 4px solid #3498db;
+      padding-left: 20px;
+    }
+
+    aside .submenu {
+      padding-left: 32px;
+      margin: 6px 0 12px 0;
+    }
+
+    aside .submenu .title-link {
+      font-size: 14.8px;
+      color: #5d6d7e;
+      padding: 9px 16px;
+      font-weight: 450;
+    }
+
+    aside .submenu .title-link:hover {
+      background: #f8fbff;
+      color: #2c3e50;
+    }
+
+    aside .submenu li.active > .item-header > .title-link {
+      background: #bbdefb;
+      color: #1565c0;
+      font-weight: 600;
+      border-left-color: #1976d2;
+    }
+
+    main {
+      margin-left: 300px;
+      padding: 48px 60px;
+      max-width: 960px;
+      transition: margin-left 0.3s ease;
+    }
+
+    main h1, main h2, main h3 { color: #2c3e50; margin-top: 2em; }
+    main p { margin: 1.4em 0; }
+
+    main img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin: 32px 0;
+    }
+
+    figure { text-align: center; margin: 48px 0; }
+    figure figcaption {
+      margin-top: 14px;
+      color: #7f8c8d;
+      font-style: italic;
+      font-size: 15px;
+    }
+
+    .nav-buttons {
+      position: fixed;
+      right: 32px;
+      bottom: 32px;
+      z-index: 30;
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-buttons button {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #3498db;
+      color: #3498db;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(52,152,219,0.15);
+      transition: all 0.3s ease;
+    }
+
     .nav-buttons button:hover:not(:disabled) {
-      background: #4a90e2;
+      background: #3498db;
       color: white;
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
     }
-    
+
     .nav-buttons button:disabled {
       opacity: 0.4;
-      cursor: not-allowed;
-      border-color: #ccc;
-      color: #ccc;
+      border-color: #bdc3c7;
+      color: #bdc3c7;
     }
+
+    @media (max-width: 960px) {
+      aside { transform: translateX(-100%); }
+      aside.open { transform: translateX(0); }
+      main { margin-left: 0; padding: 24px; max-width: none; }
+      .menu-toggle { display: flex; }
+      .overlay { display: block; }
+    }
+
+  .menu-toggle {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 60;
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background: white;
+      border: 2px solid #3498db;
+      color: #3498db;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      display: none;
+    }
+
+    .overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 960px) {
+      body { font-size: 15px; }
+      
+      aside {
+        width: 280px;
+        transform: translateX(-100%);
+      }
+      
+      aside.open { transform: translateX(0); }
+      
+      aside h3 { font-size: 17px; }
+      aside .title-link { font-size: 14px; }
+      aside .submenu .title-link { font-size: 13.5px; }
+      
+      main { 
+        margin-left: 0; 
+        padding: 80px 20px 24px; 
+        max-width: none; 
+      }
+      
+      .menu-toggle { display: flex; }
+      .overlay { display: block; }
+      
+      .nav-buttons {
+        right: 16px;
+        bottom: 16px;
+        gap: 12px;
+      }
+      
+      .nav-buttons button {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+      }
+    }
+
+	.menu-toggle {
+	  position: fixed;
+	  top: 16px;
+	  left: 16px;
+	  z-index: 60;
+	  width: 50px;
+	  height: 50px;
+	  border-radius: 8px;
+	  background: white;
+	  border: 2px solid #3498db;
+	  color: #3498db;
+	  font-size: 24px;
+	  cursor: pointer;
+	  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	  align-items: center;
+	  justify-content: center;
+	}
+
+	.overlay {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  background: rgba(0,0,0,0.5);
+	  z-index: 40;
+	  opacity: 0;
+	  pointer-events: none;
+	  transition: opacity 0.3s ease;
+	}
+
+	.overlay.open {
+	  opacity: 1;
+	  pointer-events: auto;
+	}
+
+	@media (max-width: 960px) {
+	  body { font-size: 15px; }
+	  
+	  aside {
+		width: 280px;
+		font-size: 14px;
+	  }
+	  
+	  aside h3 { font-size: 17px; }
+	  aside .title-link { font-size: 14px; }
+	  aside .submenu .title-link { font-size: 13.5px; }
+	  
+	  main { padding: 80px 20px 24px; }
+	  
+	  .nav-buttons {
+		right: 16px;
+		bottom: 16px;
+		gap: 12px;
+	  }
+	  
+	  .nav-buttons button {
+		width: 50px;
+		height: 50px;
+		font-size: 24px;
+	  }
+	}
+    mjx-assistive-mml { display: none !important; }
+	
+	/* Предотвращение дергания меню при загрузке */
+    aside.loading {
+      opacity: 0;
+    }
+    
+    aside.loaded {
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+	
+	.breadcrumbs {
+	  font-size: 14px;
+	  color: #7f8c8d;
+	  margin-bottom: 24px;
+	  padding-bottom: 16px;
+	  border-bottom: 1px solid #e8ecef;
+	  line-height: 1.6;
+	}
+
+	.breadcrumbs a {
+	  color: #3498db;
+	  text-decoration: none;
+	  transition: color 0.2s ease;
+	}
+
+	.breadcrumbs a:hover {
+	  color: #2980b9;
+	  text-decoration: underline;
+	}
+
+	.breadcrumbs .separator {
+	  margin: 0 8px;
+	  color: #bdc3c7;
+	}
+
+	.breadcrumbs .current {
+	  color: #2c3e50;
+	  font-weight: 500;
+	}
+
+	@media (max-width: 960px) {
+	  .breadcrumbs {
+		font-size: 13px;
+		padding-bottom: 12px;
+		margin-bottom: 16px;
+	  }
+	  
+	  .breadcrumbs .separator {
+		margin: 0 4px;
+	  }
+	}
+	
+	main h2, main h3 {
+	  position: relative;
+	  scroll-margin-top: 24px;
+	}
+
+	main h2:hover .anchor-link,
+	main h3:hover .anchor-link {
+	  opacity: 1;
+	}
+
+	.anchor-link {
+	  position: absolute;
+	  left: -24px;
+	  opacity: 0;
+	  transition: opacity 0.2s;
+	  color: #bdc3c7;
+	  font-weight: 400;
+	  text-decoration: none;
+	}
+
+	mjx-container {
+	  margin: 24px 0;
+	  overflow-x: auto;
+	  overflow-y: hidden;
+	}
+
+	mjx-container[display="true"] {
+	  padding: 16px;
+	  background: #fafbfc;
+	  border-radius: 6px;
+	  border: 1px solid #e1e4e8;
+	}
+	
+	a, button, .title-link, .arrow {
+	  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
   </style>
 </head>
 <body>
-  <aside>
+  <button class="menu-toggle" id="menu-toggle" aria-label="Открыть меню">☰</button>
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="loading">
     <h3>Оглавление</h3>
-		<ul>
-		  {% for doc in collections.docs %}
-			<li {% if doc.url == page.url %}class="active"{% endif %}>
-			  <a href="{{ doc.url | url }}">{{ doc.data.title }}</a>
-			</li>
-		  {% endfor %}
-		</ul>
+
+    {% set navPages = collections.docs | eleventyNavigation %}
+    {% macro navItem(entry) -%}
+      <li class="{% if entry.url == page.url %}active{% endif %} {% if entry.children.length %}has-children{% endif %}">
+        <div class="item-header">
+          <span class="arrow{% if entry.children.length %} toggle{% endif %}">
+            {% if entry.children.length %}▶{% endif %}
+          </span>
+          <a href="{{ entry.url | url }}" class="title-link">
+            {{ entry.title }}
+          </a>
+        </div>
+
+        {%- if entry.children.length -%}
+          <ul class="submenu" style="display: none;">
+            {%- for child in entry.children %}{{ navItem(child) }}{% endfor -%}
+          </ul>
+        {%- endif %}
+      </li>
+    {%- endmacro %}
+
+    <ul class="main-menu">
+      {%- for entry in navPages %}{{ navItem(entry) }}{% endfor -%}
+    </ul>
   </aside>
+
   <main>
+	{% if page.url != "/" %}
+	  {% set navPages = collections.docs | eleventyNavigation %}
+	  {% set crumbs = collections.docs | eleventyNavigationBreadcrumb(eleventyNavigation.key) %}
+	  
+	  <nav class="breadcrumbs">
+		<a href="{{ '/' | url }}">Главная</a>
+		{% for crumb in crumbs %}
+		  <span class="separator">›</span>
+		  {% if crumb.url == page.url %}
+			<span class="current">{{ crumb.title }}</span>
+		  {% else %}
+			<a href="{{ crumb.url | url }}">{{ crumb.title }}</a>
+		  {% endif %}
+		{% endfor %}
+	  </nav>
+	{% endif %}
     {{ content | safe }}
   </main>
-  
-  <!-- Кнопки навигации по оглавлению -->
-	<div class="nav-buttons">
-	  <button id="prev-btn" title="Предыдущая глава">⬅</button>
-	  <button id="next-btn" title="Следующая глава">➡</button>
-	</div>
 
-  <!-- Встроенный скрипт — всё в одном месте, никаких проблем с путями -->
+  <div class="nav-buttons">
+    <button id="prev-btn" title="Предыдущая глава">⬅</button>
+    <button id="next-btn" title="Следующая глава">➡</button>
+  </div>
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const aside = document.querySelector('aside');
-    const activeItem = document.querySelector('aside li.active');
+    document.addEventListener('DOMContentLoaded', () => {
+      const aside = document.querySelector('aside');
+      const activeItem = document.querySelector('aside li.active');
+      const STORAGE_KEY = 'motorcycle-sidebar-scroll';
+      const EXPANDED_KEY = 'motorcycle-expanded-menus';
 
-    // Ключ для хранения (один для всего сайта, т.к. меню одинаковое на всех страницах)
-    const STORAGE_KEY = 'motorcycle-sidebar-scroll';
+      // Функция переключения submenu
+      const toggleSubmenu = (li) => {
+        const submenu = li.querySelector('.submenu');
+        if (!submenu) return;
+        
+        const isHidden = submenu.style.display === 'none' || submenu.style.display === '';
+        submenu.style.display = isHidden ? 'block' : 'none';
+        li.classList.toggle('expanded', isHidden);
+      };
 
-    // 1. Восстанавливаем сохранённый скролл (если есть)
-    const savedScroll = sessionStorage.getItem(STORAGE_KEY);
-    if (savedScroll && aside) {
-      aside.scrollTop = parseInt(savedScroll, 10);
-    }
+      // Сохранение состояния раскрытых меню
+      const saveExpandedState = () => {
+        const expanded = [];
+        document.querySelectorAll('aside li.has-children.expanded').forEach(li => {
+          const link = li.querySelector(':scope > .item-header > .title-link');
+          if (link) expanded.push(link.getAttribute('href'));
+        });
+        sessionStorage.setItem(EXPANDED_KEY, JSON.stringify(expanded));
+      };
 
-    // 2. Плавная анимация к центру активного пункта (от текущего положения)
-    if (activeItem && aside) {
-      // Ждём чуть, чтобы восстановленный скролл применился
-      setTimeout(() => {
-        const asideHeight = aside.clientHeight;
-        const itemHeight = activeItem.offsetHeight;
-        const itemTop = activeItem.offsetTop;
-
-        const targetScrollTop = Math.max(0, itemTop - (asideHeight / 2) + (itemHeight / 2));
-
-        const startScrollTop = aside.scrollTop;
-        const distance = targetScrollTop - startScrollTop;
-        const duration = 600;
-        let startTime = null;
-
-        // Если почти на месте — не анимируем
-        if (Math.abs(distance) < 20) {
-          aside.scrollTop = targetScrollTop;
-          return;
+      // Восстановление состояния раскрытых меню
+      const restoreExpandedState = () => {
+        const saved = sessionStorage.getItem(EXPANDED_KEY);
+        if (!saved) return;
+        
+        try {
+          const expanded = JSON.parse(saved);
+          expanded.forEach(href => {
+            const link = document.querySelector(`aside .title-link[href="${href}"]`);
+            if (link) {
+              const li = link.closest('li.has-children');
+              if (li) {
+                const submenu = li.querySelector('.submenu');
+                if (submenu) {
+                  submenu.style.display = 'block';
+                  li.classList.add('expanded');
+                }
+              }
+            }
+          });
+        } catch (e) {
+          console.error('Failed to restore menu state:', e);
         }
+      };
 
-        function animate(currentTime) {
-          if (!startTime) startTime = currentTime;
-          const elapsed = currentTime - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-
-          const ease = progress < 0.5
-            ? 4 * progress * progress * progress
-            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-          aside.scrollTop = startScrollTop + distance * ease;
-
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        }
-
-        requestAnimationFrame(animate);
-      }, 50); // маленький таймаут для надёжности
-    }
-
-    // 3. Сохраняем скролл перед уходом по любой ссылке в меню
-    const menuLinks = document.querySelectorAll('aside ul a');
-    menuLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        if (aside) {
-          sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
-        }
-      });
-    });
-
-    // === Навигация кнопками (без изменений) ===
-    const links = Array.from(document.querySelectorAll('aside ul a'));
-    const currentUrl = window.location.pathname;
-
-    let currentIndex = links.findIndex(link => link.pathname === currentUrl);
-
-    const goTo = (index) => {
-      if (index >= 0 && index < links.length) {
-        // Сохраняем скролл перед переходом
-        if (aside) {
-          sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
-        }
-        window.location.href = links[index].href;
+      // СРАЗУ восстанавливаем состояние меню
+      restoreExpandedState();
+      
+      // Убираем loading класс для плавного появления
+      if (aside) {
+        aside.classList.remove('loading');
+        aside.classList.add('loaded');
       }
-    };
 
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
+      // Клик по стрелке — только раскрытие/сворачивание
+      document.querySelectorAll('aside .arrow.toggle').forEach(arrow => {
+        arrow.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const li = arrow.closest('li.has-children');
+          if (li) {
+            toggleSubmenu(li);
+            saveExpandedState();
+          }
+        });
+      });
 
-    const updateButtons = () => {
-      prevBtn.disabled = currentIndex <= 0;
-      nextBtn.disabled = currentIndex >= links.length - 1 || currentIndex === -1;
-    };
+      // Клик по ссылке родительского пункта
+      document.querySelectorAll('aside li.has-children > .item-header > .title-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const li = link.closest('li.has-children');
+          if (!li) return;
 
-    updateButtons();
+          const submenu = li.querySelector('.submenu');
+          if (!submenu) return;
 
-    prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
-    nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+          const isCurrentPage = li.classList.contains('active');
+          
+          if (isCurrentPage) {
+            e.preventDefault();
+            toggleSubmenu(li);
+            saveExpandedState();
+          } else {
+            submenu.style.display = 'block';
+            li.classList.add('expanded');
+            saveExpandedState();
+            if (aside) sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
+          }
+        });
+      });
 
-    // Стрелки клавиатуры
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') prevBtn.click();
-      if (e.key === 'ArrowRight') nextBtn.click();
+      // Автоматическое раскрытие родительских разделов для текущей страницы
+      if (activeItem) {
+        let parent = activeItem.parentElement;
+        while (parent) {
+          if (parent.tagName === 'UL' && parent.classList.contains('submenu')) {
+            const parentLi = parent.closest('li.has-children');
+            if (parentLi) {
+              parent.style.display = 'block';
+              parentLi.classList.add('expanded');
+            }
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+      // Сохранение и восстановление скролла меню
+      const savedScroll = sessionStorage.getItem(STORAGE_KEY);
+      if (savedScroll && aside) {
+        aside.scrollTop = parseInt(savedScroll, 10);
+      }
+
+      document.querySelectorAll('aside .title-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (aside) sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
+        });
+      });
+
+      // Плавное центрирование активного пункта
+      if (activeItem && aside) {
+        requestAnimationFrame(() => {
+          const itemRect = activeItem.getBoundingClientRect();
+          const asideRect = aside.getBoundingClientRect();
+          const itemCenter = itemRect.top + itemRect.height / 2;
+          const asideCenter = asideRect.height / 2;
+          const targetScroll = aside.scrollTop + itemCenter - asideCenter - 20;
+
+          aside.scrollTo({
+            top: targetScroll,
+            behavior: 'smooth'
+          });
+
+          sessionStorage.setItem(STORAGE_KEY, targetScroll);
+        });
+      }
+
+      // Кнопки prev/next и клавиши
+      const links = Array.from(document.querySelectorAll('aside .title-link'));
+      const currentUrl = window.location.pathname;
+      let currentIndex = links.findIndex(link => link.pathname === currentUrl);
+
+      const goTo = (index) => {
+        if (index >= 0 && index < links.length) {
+          if (aside) sessionStorage.setItem(STORAGE_KEY, aside.scrollTop);
+          window.location.href = links[index].href;
+        }
+      };
+
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      const updateButtons = () => {
+        if (prevBtn) prevBtn.disabled = currentIndex <= 0;
+        if (nextBtn) nextBtn.disabled = currentIndex >= links.length - 1 || currentIndex === -1;
+      };
+
+      updateButtons();
+
+      if (prevBtn) prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && prevBtn) prevBtn.click();
+        if (e.key === 'ArrowRight' && nextBtn) nextBtn.click();
+      });
+
+      // Мобильное меню
+      const menuToggle = document.getElementById('menu-toggle');
+      const overlay = document.getElementById('overlay');
+
+      if (menuToggle && overlay && aside) {
+        const openMenu = () => {
+          aside.classList.add('open');
+          overlay.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        };
+
+        const closeMenu = () => {
+          aside.classList.remove('open');
+          overlay.classList.remove('open');
+          document.body.style.overflow = '';
+        };
+
+        menuToggle.addEventListener('click', openMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && aside.classList.contains('open')) {
+            closeMenu();
+          }
+        });
+
+        document.querySelectorAll('aside .title-link').forEach(link => {
+          link.addEventListener('click', () => {
+            if (window.innerWidth <= 960) {
+              setTimeout(() => closeMenu(), 150);
+            }
+          });
+        });
+      }
     });
-  });
-</script>
+  </script>
+
+
+
 </body>
 </html>

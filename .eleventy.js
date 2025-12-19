@@ -3,6 +3,8 @@ const markdownIt = require("markdown-it");
 const markdownItImageFigures = require("markdown-it-image-figures");
 
 module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(require("@11ty/eleventy-navigation"));
+  
   const mdOptions = {
     html: true,
     linkify: true,
